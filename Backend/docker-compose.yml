@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  auth-service:
+    build:
+      context: ./auth-service
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    # other configuration for auth-service
+
+  notification-service:
+    build:
+      context: ./notification-service
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    # other configuration for notification-service
+
+  real-time-service:
+    build:
+      context: ./real-time-service
+      dockerfile: Dockerfile
+    ports:
+      - "6000:6000"
+    # other configuration for real-time-service

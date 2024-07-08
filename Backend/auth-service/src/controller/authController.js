@@ -25,7 +25,7 @@ const login = async (req, res) => {
     }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
     const refreshToken = jwt.sign({ id: user._id }, process.env.REFRESH_JWT_SECRET, { expiresIn: "24h" });
-    res.status(201).send({ msg: "Login successful", token, refreshToken });
+    res.status(201).send({ msg: "Login successful", user,token, refreshToken});
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
