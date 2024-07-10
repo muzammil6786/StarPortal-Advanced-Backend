@@ -1,109 +1,139 @@
 const express = require('express');
-const { createNotification, getNotifications, getNotification, markAsRead } = require('../controller/notificationController');
-const authMiddleware = require('../middleware/authMiddleware');
-
+const { createNotification, getNotifications, getNotificationById, markAsRead } = require('../controller/notificationController');
+const {authenticateUser} = require("../middleware/auth");
 const router = express.Router();
 
-/*
 
-swagger: "2.0"
-info:
-  version: "1.0.0"
-  title: Notification Service API
-paths:
-  /api/notifications:
-    post:
-      summary: Create a new notification for a user.
-      parameters:
-        - name: body
-          in: body
-          description: Notification details
-          required: true
-          schema:
-            type: object
-            properties:
-              userId:
-                type: string
-                description: User ID for the notification
-              message:
-                type: string
-                description: Notification message
-      responses:
-        '201':
-          description: Created
-          schema:
-            type: object
-            properties:
-              _id:
-                type: string
-                description: Notification ID
-              userId:
-                type: string
-                description: User ID
-              message:
-                type: string
-                description: Notification message
-        '400':
-          description: Bad request
-    get:
-      summary: Get all notifications for the authenticated user.
-      responses:
-        '200':
-          description: Success
-          schema:
-            type: array
-            items:
-              $ref: '#/definitions/Notification'
-        '401':
-          description: Unauthorized
-  /api/notifications/{id}:
-    get:
-      summary: Get details of a specific notification.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/Notification'
-        '404':
-          description: Notification not found
-    put:
-      summary: Mark a notification as read.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          type: string
-      responses:
-        '200':
-          description: Success
-          schema:
-            $ref: '#/definitions/Notification'
-        '404':
-          description: Notification not found
-definitions:
-  Notification:
-    type: object
-    properties:
-      _id:
-        type: string
-        description: Notification ID
-      userId:
-        type: string
-        description: User ID
-      message:
-        type: string
-        description: Notification message
-*/ 
+/**
+ * @swagger
+ * tags:
+ *   name: Notifications
+ *   description: API endpoints for managing notifications
+ */
+
+/**
+ * @swagger
+ * /api/notifications:
+ *   post:
+ *     summary: Create a new notification
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []  # Use JWT Bearer token for authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               message:
+ *                 type: string
+ *                 description: Notification message
+ *             required:
+ *               - message
+ *     responses:
+ *       '201':
+ *         description: Created
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Notification'
+ *       '400':
+ *         description: Bad request
+ *       '401':
+ *         description: Unauthorized
+ *       '500':
+ *         description: Internal server error
+ */
+router.post('/notifications', authenticateUser, createNotification);
 
 
-router.post('/notifications', authMiddleware, createNotification);
-router.get('/notifications', authMiddleware, getNotifications);
-router.get('/notifications/:id', authMiddleware, getNotification);
-router.put('/notifications/:id', authMiddleware, markAsRead);
+/**
+ * @swagger
+ * /api/notifications:
+ *   get:
+ *     summary: Get all notifications for the authenticated user
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []  # Use JWT Bearer token for authentication
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Notification'
+ *       '401':
+ *         description: Unauthorized
+ *       '500':
+ *         description: Internal server error
+ */
+router.get('/notifications', authenticateUser, getNotifications);
+
+
+/**
+ * @swagger
+ * /api/notifications/{id}:
+ *   get:
+ *     summary: Get details of a specific notification
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []  # Use JWT Bearer token for authentication
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the notification
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Notification'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Notification not found
+ *       '500':
+ *         description: Internal server error
+ */
+router.get('/notifications/:id', authenticateUser ,getNotificationById);
+
+
+/**
+ * @swagger
+ * /api/notifications/{id}:
+ *   put:
+ *     summary: Mark a notification as read
+ *     tags: [Notifications]
+ *     security:
+ *       - bearerAuth: []  # Use JWT Bearer token for authentication
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the notification
+ *     responses:
+ *       '200':
+ *         description: Successful operation
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Notification'
+ *       '401':
+ *         description: Unauthorized
+ *       '404':
+ *         description: Notification not found
+ *       '500':
+ *         description: Internal server error
+ */
+router.put('/notifications/:id', authenticateUser ,markAsRead);
 
 module.exports = router;

@@ -1,8 +1,6 @@
 const express = require('express');
-const { register, login } = require('../controller/authController');
-
+const { register, login ,validate } = require('../controller/authController');
 const router = express.Router();
-
 /**
  * @swagger
  * components:
@@ -98,5 +96,6 @@ router.post('/register', register);
  *         description: Invalid credentials
  */
 router.post('/login', login);
+
 
 module.exports = router;

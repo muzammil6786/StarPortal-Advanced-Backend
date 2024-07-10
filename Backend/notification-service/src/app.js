@@ -3,25 +3,58 @@ const mongoose = require('mongoose');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const notificationRoutes = require('./routes/notificationRoutes');
+const {authenticateUser} = require("./middleware/auth")
 
 const app = express();
 
 app.use(express.json());
 
 const swaggerOptions = {
-  swaggerDefinition: {
+  definition: {
     openapi: '3.0.0',
     info: {
       title: 'Notification Service API',
       version: '1.0.0',
-      description: 'Notification Service API Documentation'
-    }
+      description: 'API endpoints for managing notifications',
+    },
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        },
+      },
+      schemas: {
+        Notification: {
+          type: 'object',
+          properties: {
+            id: { type: 'string' },
+            userId: { type: 'string' },
+            message: { type: 'string' },
+            read: { type: 'boolean' },
+          },
+          required: ['userId', 'message'],
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [], // Empty array indicates it applies to all methods in the path
+      },
+    ],
   },
-  apis: ['./src/routes/*.js']
+  // Path to the API specs
+  apis: ['./src/routes/*.js'], // Replace with your actual path
 };
 
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+const swaggerSpec = swaggerJsDoc(swaggerOptions);
+
+// Serve Swagger UI at /api-docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Middleware to authenticate JWT token
+app.use(authenticateUser);
 
 app.use('/api', notificationRoutes);
 

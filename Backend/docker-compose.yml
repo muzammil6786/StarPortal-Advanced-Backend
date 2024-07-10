@@ -1,26 +1,46 @@
 version: '3.8'
-
 services:
   auth-service:
-    build:
-      context: ./auth-service
-      dockerfile: Dockerfile
-    ports:
-      - "4000:4000"
-    # other configuration for auth-service
-
-  notification-service:
-    build:
-      context: ./notification-service
-      dockerfile: Dockerfile
+    build: ./auth-service
     ports:
       - "5000:5000"
-    # other configuration for notification-service
+    environment:
+      - MONGO_URI=mongodb+srv://muzammil:khan@cluster0.nwe9ct0.mongodb.net/authservice
+      - JWT_SECRET=muzammil
+      - PORT=5000
+    depends_on:
+      - mongo
+
+  notification-service:
+    build: ./notification-service
+    ports:
+      - "5001:5001"
+    environment:
+      - MONGO_URI=mongodb+srv://muzammil:khan@cluster0.nwe9ct0.mongodb.net/notificationservice
+      - RABBITMQ_URI=amqp://rabbitmq
+      - PORT=5001
+    depends_on:
+      - mongo
+      - rabbitmq
 
   real-time-service:
-    build:
-      context: ./real-time-service
-      dockerfile: Dockerfile
+    build: ./real-time-service
     ports:
-      - "6000:6000"
-    # other configuration for real-time-service
+      - "5002:5002"
+    environment:
+      - RABBITMQ_URI=amqp://rabbitmq
+      - PORT=5002
+    depends_on:
+      - rabbitmq
+    command: ["./wait-for-it.sh", "rabbitmq:5672", "--", "npm", "start"]
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
