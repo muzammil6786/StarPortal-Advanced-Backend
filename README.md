@@ -38,35 +38,19 @@ Enables WebSocket connections for real-time notification updates.
 - Configuration via environment variables.
 - Code quality maintained using ESLint.
 
-## Deployment
-
-The application can be deployed on cloud services like Heroku or AWS. Docker containers can also be used for deployment with Dockerfile and docker-compose.yml provided.
-
-## Bonus Features
-
-- User roles and permissions.
-- Pagination for GET endpoints.
-- Retry mechanism for failed message processing.
-- Implementation using GraphQL instead of REST for the API.
 
 ## Setup Instructions
 
-1. Clone the repository: `git clone <repository-url>`
+1. Clone the repository: `git clone https://github.com/muzammil6786/StarPortal-Advanced-Backend`
 2. Install dependencies: `npm install`
 3. Set environment variables: Create a `.env` file and define necessary variables (e.g., `PORT`, `MONGODB_URI`, `RABBITMQ_URL`, `JWT_SECRET`).
 4. Start the services: `npm start` or use Docker and `docker-compose up`.
 
 ## API Documentation
 
-Swagger is used to document the APIs. Access the Swagger documentation at `/api-docs`.
+Swagger is used to document the APIs. Access the Swagger documentation at 
+ Auth Service API :- http://localhost:5000/api-docs/
+ Notification Service API :- http://localhost:5001/api-docs/
 
-## Contributing
 
-- Fork the repository
-- Create a new branch (`git checkout -b feature`)
-- Make changes and commit (`git commit -am 'Add feature'`)
-- Push to the branch (`git push origin feature`)
-- Create a pull request
-
-## Authors
 
